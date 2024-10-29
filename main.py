@@ -75,7 +75,7 @@ def split_merge(img):
 
 
 # Đọc hình ảnh
-img = cv2.imread('D:\\Image\\test6.jpg')
+img = cv2.imread('test.jpg')
 
 # Thực hiện chia và hợp vùng
 original_image, result = split_merge(img)
