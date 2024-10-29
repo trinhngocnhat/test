@@ -1,5 +1,8 @@
 import cv2
 import numpy as np
+import tkinter as tk
+from tkinter import filedialog
+from PIL import Image, ImageTk
 
 
 def is_homogeneous(region, threshold):
@@ -52,14 +55,47 @@ def split_merge(img):
     return img, processed_image  # Trả về ảnh gốc và ảnh đã xử lý
 
 
-# Đọc hình ảnh
-img = cv2.imread('D:\\Image\\leaf.png')
+def load_image():
+    """Tải hình ảnh từ tệp tin và xử lý."""
+    file_path = filedialog.askopenfilename()
+    if file_path:
+        img = cv2.imread(file_path)
+        original_image, result = split_merge(img)
 
-# Thực hiện chia và hợp vùng
-original_image, result = split_merge(img)
+        # Chuyển đổi ảnh từ BGR sang RGB
+        original_image = cv2.cvtColor(original_image, cv2.COLOR_BGR2RGB)
+        result = cv2.cvtColor(result, cv2.COLOR_BGR2RGB)
 
-# Hiển thị kết quả
-cv2.imshow('Anh goc', original_image)
-cv2.imshow('Sau khi tach va hop', result)
-cv2.waitKey(0)
-cv2.destroyAllWindows()
+        # Hiển thị ảnh gốc
+        display_image(original_image, original_label)
+
+        # Hiển thị ảnh đã xử lý
+        display_image(result, result_label)
+
+
+def display_image(image, label):
+    """Hiển thị ảnh trong label."""
+    image = Image.fromarray(image)
+    image = ImageTk.PhotoImage(image)
+    label.config(image=image)
+    label.image = image  # Giữ tham chiếu để không bị garbage collection
+
+
+# Tạo giao diện Tkinter
+root = tk.Tk()
+root.title("Ứng dụng Phân chia và Hợp vùng Ảnh")
+
+# Nút tải ảnh
+load_button = tk.Button(root, text="Tải hình ảnh", command=load_image)
+load_button.pack()
+
+# Label để hiển thị ảnh gốc
+original_label = tk.Label(root)
+original_label.pack(side=tk.LEFT)
+
+# Label để hiển thị ảnh đã xử lý
+result_label = tk.Label(root)
+result_label.pack(side=tk.RIGHT)
+
+# Chạy ứng dụng
+root.mainloop()
